@@ -1,0 +1,28 @@
+package week4.homework;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+public class SortingUsingCollectionwords {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		
+		String cmp[]={"HCL", "Wipro", "Aspire Systems", "CTS"};
+		
+		List<String>company=new ArrayList<String>();
+		
+		for (String complist : cmp) 
+		{
+				company.add(complist);
+		}
+		Collections.sort(company);
+		System.out.println("Ascending orderis: " +company);
+		Collections.reverse(company);
+		System.out.println("Descending order is "+ company);
+		
+	}
+
+	
+}
