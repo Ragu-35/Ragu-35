@@ -1,0 +1,52 @@
+package week4.homework;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+
+import org.apache.commons.math3.analysis.function.Add;
+
+public class FindMissingElementusingList {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		
+		int arr[]= {1, 2, 3, 4, 10, 6, 8};
+		int n= arr.length;
+		
+		//declaring the list
+		List<Integer>m=new ArrayList<Integer>();
+		
+		//moving to list
+		 for (Integer integer : arr) 
+		 {
+			m.add(integer);
+		 }
+		 
+		// Arrange the collection in ascending order
+		 Collections.sort(m);
+		 System.out.println("Orignial element " + m);
+		 Integer max = m.get(n-1);
+		 System.out.println("Highest value in the list " + max);
+		 
+		 List<Integer> missingNumbers = new ArrayList<>();
+		 
+		 for (int i = 0; i < m.size() - 1; i++) {
+	            int current = m.get(i);
+	            int next = m.get(i + 1);
+	            for (int j = current + 1; j < next; j++) {
+	                missingNumbers.add(j);
+	            }
+	        }
+	        
+	        System.out.println("Missing numbers: " + missingNumbers);
+		 
+		 
+		}
+		 
+		 
+	
+
+}
