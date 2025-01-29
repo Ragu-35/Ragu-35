@@ -1,0 +1,56 @@
+package marathon;
+
+import java.time.Duration;
+import java.util.List;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+
+public class Marathon1Bag {
+
+	public static void main(String[] args) throws InterruptedException {
+		// TODO Auto-generated method stub
+		
+		ChromeDriver driver =new ChromeDriver();
+		driver.get("https://www.amazon.in/");
+		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(18));
+		driver.manage().window().maximize();
+		driver.navigate().refresh();
+
+		// Type "Bags for boys" in the Search box
+		driver.findElement(By.id("twotabsearchtextbox")).sendKeys("bag for boys",Keys.ENTER);
+		
+		//Print the total number of results (like 50000)
+		//example like this-----> 1-48 of over 50,000 results for "bags for boys"
+		System.out.println(driver.findElement(By.xpath("//h2[@class='a-size-base a-spacing-small a-spacing-top-small a-text-normal']")).getText());
+		
+		//Select the first 2 brands in the left menu
+	    //(like American Tourister, Generic)
+
+		driver.findElement(By.xpath("(//i[@class='a-icon a-icon-checkbox'])[3]")).click();
+		driver.findElement(By.xpath("(//i[@class='a-icon a-icon-checkbox'])[4]")).click();
+		
+		//Choose New Arrivals (Sort)
+		driver.findElement(By.xpath("//span[text()='Featured']")).click();
+		driver.findElement(By.xpath("//a[text()='Newest Arrivals']")).click();
+		
+		//storing the name and price as webelement
+		WebElement name= driver.findElement(By.xpath("(//a[@class='a-link-normal s-line-clamp-2 s-link-style a-text-normal'])[1]"));
+		WebElement rate = driver.findElement(By.xpath("//span[@class='a-price-whole']"));
+		
+		//Print the first resulting bag info (name, discounted price)
+		System.out.println("name of the first bag is "+ name.getText());
+		System.out.println("rate of this bag is"+ rate.getText());
+		
+		//Get the page title 
+		 System.out.println("Page Title: " + driver.getTitle());
+		
+		Thread.sleep(3000);
+		//driver.close();
+		
+
+	}
+
+}
