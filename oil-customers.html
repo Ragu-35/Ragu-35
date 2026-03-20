@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Oil Business WhatsApp Tool</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', sans-serif; background: #f0f7f0; color: #222; min-height: 100vh; }
+  header { background: #25D366; color: white; padding: 16px 20px; display: flex; align-items: center; gap: 12px; }
+  header h1 { font-size: 1.2rem; }
+  header span { font-size: 1.6rem; }
+  .container { max-width: 700px; margin: 0 auto; padding: 20px 16px; }
+  .card { background: white; border-radius: 12px; padding: 20px; margin-bottom: 18px; box-shadow: 0 2px 8px #0001; }
+  .card h2 { font-size: 1rem; color: #128C7E; margin-bottom: 12px; font-weight: 600; }
+  textarea { width: 100%; border: 1.5px solid #ddd; border-radius: 8px; padding: 10px; font-size: 0.9rem; resize: vertical; font-family: inherit; }
+  textarea:focus { outline: none; border-color: #25D366; }
+  .btn { display: inline-block; padding: 10px 20px; border-radius: 8px; border: none; cursor: pointer; font-size: 0.9rem; font-weight: 600; transition: background 0.2s; }
+  .btn-green { background: #25D366; color: white; }
+  .btn-green:hover { background: #1ebe59; }
+  .btn-outline { background: white; color: #128C7E; border: 1.5px solid #128C7E; margin-left: 8px; }
+  .btn-outline:hover { background: #e8f8f2; }
+  .btn-small { padding: 7px 14px; font-size: 0.82rem; }
+  .msg-box { background: #e8f8f2; border-left: 4px solid #25D366; border-radius: 8px; padding: 12px 14px; font-size: 0.88rem; line-height: 1.6; white-space: pre-wrap; margin-bottom: 10px; }
+  .lang-toggle { display: flex; gap: 8px; margin-bottom: 12px; }
+  .lang-btn { padding: 6px 16px; border-radius: 20px; border: 1.5px solid #25D366; background: white; color: #128C7E; font-size: 0.82rem; cursor: pointer; font-weight: 600; }
+  .lang-btn.active { background: #25D366; color: white; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+  th { background: #f5faf5; color: #555; text-align: left; padding: 8px 10px; border-bottom: 1.5px solid #e0e0e0; }
+  td { padding: 9px 10px; border-bottom: 1px solid #f0f0f0; vertical-align: middle; }
+  tr:last-child td { border-bottom: none; }
+  .badge { display: inline-block; padding: 2px 10px; border-radius: 10px; font-size: 0.75rem; font-weight: 600; }
+  .badge-sent { background: #e0fbe9; color: #1a8a3a; }
+  .badge-pending { background: #fff4e0; color: #b86e00; }
+  .progress-bar { background: #e0e0e0; border-radius: 10px; height: 8px; margin-top: 8px; }
+  .progress-fill { background: #25D366; height: 8px; border-radius: 10px; transition: width 0.4s; }
+  .progress-label { font-size: 0.82rem; color: #555; margin-top: 4px; }
+  .hint { font-size: 0.8rem; color: #888; margin-top: 6px; }
+  .error { color: #c0392b; font-size: 0.82rem; margin-top: 6px; }
+  .tabs { display: flex; border-bottom: 2px solid #e0e0e0; margin-bottom: 18px; }
+  .tab { padding: 10px 18px; cursor: pointer; font-weight: 600; font-size: 0.9rem; color: #888; border-bottom: 3px solid transparent; margin-bottom: -2px; }
+  .tab.active { color: #128C7E; border-bottom-color: #25D366; }
+  #importError { display: none; }
+  .send-btn { background: #25D366; color: white; border: none; border-radius: 7px; padding: 6px 14px; font-size: 0.82rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 5px; }
+  .send-btn:hover { background: #1ebe59; }
+  .send-btn.sent { background: #bbb; cursor: default; }
+  .reset-btn { background: #fff; color: #e74c3c; border: 1.5px solid #e74c3c; border-radius: 7px; padding: 6px 12px; font-size: 0.82rem; font-weight: 600; cursor: pointer; }
+  .reset-btn:hover { background: #fdf0f0; }
+  .section-row { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+</style>
+</head>
+<body>
+<header>
+  <span>🛢️</span>
+  <div>
+    <h1>Oil Business — Monthly WhatsApp Enquiry</h1>
+    <div style="font-size:0.8rem;opacity:0.9">Friendly reminder tool for your customers</div>
+  </div>
+</header>
+<div class="container">
+
+  <div class="tabs">
+    <div class="tab active" onclick="showTab('customers')">👥 Customers</div>
+    <div class="tab" onclick="showTab('message')">💬 Message</div>
+    <div class="tab" onclick="showTab('send')">📤 Send</div>
+  </div>
+
+  <!-- TAB: CUSTOMERS -->
+  <div id="tab-customers">
+    <div class="card">
+      <h2>📋 Paste Your Customer List</h2>
+      <textarea id="pasteInput" rows="10" placeholder="Paste names and numbers here. One customer per line.
+Formats accepted:
+  Ravi, 9876543210
+  Meena 9876543211
+  9876543212 Suresh
+  Karthik - 9876543213"></textarea>
+      <div class="hint">Indian numbers: enter 10 digits (91 will be added automatically).</div>
+      <div id="importError" class="error"></div>
+      <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn btn-green" onclick="importCustomers()">✅ Import Customers</button>
+        <button class="btn btn-outline" onclick="clearAll()">🗑 Clear All</button>
+      </div>
+    </div>
+    <div class="card" id="customerListCard" style="display:none">
+      <div class="section-row">
+        <h2>👥 Customer List (<span id="custCount">0</span>)</h2>
+      </div>
+      <table>
+        <thead><tr><th>#</th><th>Name</th><th>Number</th><th></th></tr></thead>
+        <tbody id="customerTable"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- TAB: MESSAGE -->
+  <div id="tab-message" style="display:none">
+    <div class="card">
+      <h2>💬 Message Template</h2>
+      <div class="lang-toggle">
+        <button class="lang-btn active" id="btnEN" onclick="setLang('en')">🇬🇧 English</button>
+        <button class="lang-btn" id="btnTA" onclick="setLang('ta')">🇮🇳 Tamil</button>
+      </div>
+      <div class="msg-box" id="msgPreview"></div>
+      <div style="margin-top:10px;">
+        <label style="font-size:0.85rem;color:#555;font-weight:600;">✏️ Customize message (use {name} for customer name):</label>
+        <textarea id="msgEditor" rows="6" style="margin-top:6px;" oninput="updatePreview()"></textarea>
+      </div>
+      <div style="margin-top:10px;">
+        <button class="btn btn-outline btn-small" onclick="resetMsg()">↩ Reset to Default</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: SEND -->
+  <div id="tab-send" style="display:none">
+    <div class="card">
+      <h2>📊 Progress</h2>
+      <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+      <div class="progress-label" id="progressLabel">0 of 0 sent</div>
+      <div style="margin-top:12px;">
+        <button class="btn btn-outline btn-small reset-btn" onclick="resetSent()">↩ Reset All to Pending</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="section-row">
+        <h2>📤 Send Messages</h2>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <label style="font-size:0.82rem;color:#555;">Language:</label>
+          <select id="sendLang" style="border:1.5px solid #25D366;border-radius:6px;padding:4px 8px;font-size:0.82rem;color:#128C7E;font-weight:600;">
+            <option value="en">English</option>
+            <option value="ta">Tamil</option>
+          </select>
+        </div>
+      </div>
+      <table>
+        <thead><tr><th>#</th><th>Name</th><th>Number</th><th>Status</th><th>Action</th></tr></thead>
+        <tbody id="sendTable"></tbody>
+      </table>
+      <div id="noCustomers" style="text-align:center;padding:20px;color:#aaa;font-size:0.9rem;">No customers yet. Go to the Customers tab to add them.</div>
+    </div>
+  </div>
+
+</div>
+<script>
+let customers = [];
+let sent = {};
+let lang = 'en';
+
+const defaultMsgEN = `Hi {name}! 😊
+
+This is a friendly message from your oil supplier. Hope you and your family are doing well! 🙏
+
+As we begin this month, we wanted to check in — do you need any *cooking oil* this month?
+
+We have fresh stock available and would be happy to arrange a delivery for you at the earliest.
+
+Just reply to this message or give us a call and we'll take care of the rest! 🛢️✅`;
+
+const defaultMsgTA = `வணக்கம் {name}! 😊
+
+இது உங்கள் எண்ணெய் சப்ளையர் சார்பில் அன்பான வணக்கம். உங்கள் குடும்பத்தினர் அனைவரும் நலமாக இருக்கிறீர்களா? 🙏
+
+இந்த மாதம் தொடங்குவதை முன்னிட்டு உங்களிடம் ஒரு சின்ன விஷயம் கேட்கலாம் என்று நினைத்தோம் — இந்த மாதம் *சமையல் எண்ணெய்* தேவையா?
+
+புதிய ஸ்டாக் தயாராக உள்ளது, விரைவில் டெலிவரி செய்ய தயாராக இருக்கிறோம்.
+
+இந்த மெசேஜிற்கு பதில் அனுப்புங்கள் அல்லது எங்களை அழையுங்கள், நாங்கள் கவனித்துக்கொள்கிறோம்! 🛢️✅`;
+
+let customMsgEN = defaultMsgEN;
+let customMsgTA = defaultMsgTA;
+
+// Save & load customers from localStorage
+function saveData() {
+  try {
+    localStorage.setItem('oil_customers', JSON.stringify(customers));
+    localStorage.setItem('oil_sent', JSON.stringify(sent));
+    localStorage.setItem('oil_msgEN', customMsgEN);
+    localStorage.setItem('oil_msgTA', customMsgTA);
+  } catch(e) {}
+}
+
+function loadData() {
+  try {
+    const c = localStorage.getItem('oil_customers');
+    const s = localStorage.getItem('oil_sent');
+    const en = localStorage.getItem('oil_msgEN');
+    const ta = localStorage.getItem('oil_msgTA');
+    if (c) customers = JSON.parse(c);
+    if (s) sent = JSON.parse(s);
+    if (en) customMsgEN = en;
+    if (ta) customMsgTA = ta;
+  } catch(e) {}
+}
+
+function showTab(t) {
+  ['customers','message','send'].forEach(id => {
+    document.getElementById('tab-'+id).style.display = id===t ? '' : 'none';
+  });
+  document.querySelectorAll('.tab').forEach((el,i) => {
+    el.classList.toggle('active', ['customers','message','send'][i] === t);
+  });
+  if (t === 'send') renderSendTable();
+}
+
+function setLang(l) {
+  lang = l;
+  document.getElementById('btnEN').classList.toggle('active', l==='en');
+  document.getElementById('btnTA').classList.toggle('active', l==='ta');
+  document.getElementById('msgEditor').value = l==='en' ? customMsgEN : customMsgTA;
+  updatePreview();
+}
+
+function updatePreview() {
+  const val = document.getElementById('msgEditor').value;
+  if (lang==='en') customMsgEN = val; else customMsgTA = val;
+  const sample = customers.length ? customers[0].name : 'Customer';
+  document.getElementById('msgPreview').textContent = val.replace(/{name}/g, sample);
+  saveData();
+}
+
+function resetMsg() {
+  if (lang==='en') { customMsgEN = defaultMsgEN; document.getElementById('msgEditor').value = defaultMsgEN; }
+  else { customMsgTA = defaultMsgTA; document.getElementById('msgEditor').value = defaultMsgTA; }
+  updatePreview();
+}
+
+function initMessage() {
+  document.getElementById('msgEditor').value = customMsgEN;
+  updatePreview();
+}
+
+function importCustomers() {
+  const raw = document.getElementById('pasteInput').value.trim();
+  const errEl = document.getElementById('importError');
+  errEl.style.display = 'none';
+  if (!raw) { errEl.textContent = 'Please paste some data first.'; errEl.style.display='block'; return; }
+  const lines = raw.split('\n').map(l=>l.trim()).filter(Boolean);
+  const result = [];
+  const errors = [];
+  lines.forEach((line, i) => {
+    const numMatch = line.match(/(\+?91)?[\s\-]?([6-9]\d{9})/);
+    if (!numMatch) { errors.push(`Line ${i+1}: "${line}" — no valid number found`); return; }
+    let num = numMatch[2];
+    let fullNum = '91' + num;
+    let name = line.replace(/[\+\d\s\-,]+/g, ' ').trim();
+    if (!name) name = 'Customer ' + (result.length+1);
+    result.push({ name, number: fullNum });
+  });
+  if (errors.length) {
+    errEl.textContent = 'Some lines skipped: ' + errors.join(' | ');
+    errEl.style.display = 'block';
+  }
+  if (!result.length) return;
+  customers = result;
+  sent = {};
+  saveData();
+  renderCustomerTable();
+  renderSendTable();
+  document.getElementById('customerListCard').style.display = '';
+  document.getElementById('custCount').textContent = customers.length;
+}
+
+function renderCustomerTable() {
+  const tb = document.getElementById('customerTable');
+  tb.innerHTML = customers.map((c,i) => `
+    <tr>
+      <td>${i+1}</td>
+      <td>${c.name}</td>
+      <td>+${c.number}</td>
+      <td><button class="btn btn-outline btn-small" style="color:#c0392b;border-color:#c0392b;" onclick="removeCustomer(${i})">✕</button></td>
+    </tr>`).join('');
+}
+
+function removeCustomer(i) {
+  customers.splice(i,1);
+  delete sent[i];
+  saveData();
+  renderCustomerTable();
+  renderSendTable();
+  document.getElementById('custCount').textContent = customers.length;
+  if (!customers.length) document.getElementById('customerListCard').style.display='none';
+}
+
+function clearAll() {
+  customers = []; sent = {};
+  document.getElementById('pasteInput').value = '';
+  document.getElementById('customerListCard').style.display = 'none';
+  document.getElementById('importError').style.display = 'none';
+  saveData();
+  renderSendTable();
+}
+
+function getMsg(name) {
+  const sl = document.getElementById('sendLang') ? document.getElementById('sendLang').value : 'en';
+  const tmpl = sl==='ta' ? customMsgTA : customMsgEN;
+  return tmpl.replace(/{name}/g, name);
+}
+
+function sendWA(i) {
+  const c = customers[i];
+  const msg = encodeURIComponent(getMsg(c.name));
+  window.open(`https://wa.me/${c.number}?text=${msg}`, '_blank');
+  sent[i] = true;
+  saveData();
+  renderSendTable();
+  updateProgress();
+}
+
+function renderSendTable() {
+  const tb = document.getElementById('sendTable');
+  const noEl = document.getElementById('noCustomers');
+  if (!customers.length) {
+    tb.innerHTML = '';
+    if(noEl) noEl.style.display = '';
+    updateProgress();
+    return;
+  }
+  if(noEl) noEl.style.display = 'none';
+  tb.innerHTML = customers.map((c,i) => `
+    <tr>
+      <td>${i+1}</td>
+      <td>${c.name}</td>
+      <td>+${c.number}</td>
+      <td><span class="badge ${sent[i]?'badge-sent':'badge-pending'}">${sent[i]?'✅ Sent':'⏳ Pending'}</span></td>
+      <td>${sent[i]
+        ? `<button class="send-btn sent" disabled>Sent</button>`
+        : `<button class="send-btn" onclick="sendWA(${i})">📲 Open WhatsApp</button>`
+      }</td>
+    </tr>`).join('');
+  updateProgress();
+}
+
+function updateProgress() {
+  const total = customers.length;
+  const done = Object.keys(sent).filter(k=>sent[k]).length;
+  const pct = total ? Math.round(done/total*100) : 0;
+  document.getElementById('progressFill').style.width = pct+'%';
+  document.getElementById('progressLabel').textContent = `${done} of ${total} sent (${pct}%)`;
+}
+
+function resetSent() {
+  sent = {};
+  saveData();
+  renderSendTable();
+}
+
+// Init
+loadData();
+initMessage();
+if (customers.length) {
+  renderCustomerTable();
+  document.getElementById('customerListCard').style.display = '';
+  document.getElementById('custCount').textContent = customers.length;
+}
+</script>
+</body>
+</html>
